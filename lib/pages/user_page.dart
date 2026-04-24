@@ -10,6 +10,18 @@ class UserFormPage extends StatefulWidget {
 }
 
 class _UserFormPageState extends State<UserFormPage> {
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.user != null) {
+      _nameController.text = widget.user!.name;
+      _emailController.text = widget.user!.email;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container();
