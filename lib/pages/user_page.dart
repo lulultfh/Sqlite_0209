@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sql_209/bloc/user_bloc.dart';
+import 'package:sql_209/bloc/user_event.dart';
 import 'package:sql_209/domain/entities/user_entity.dart';
 
 class UserFormPage extends StatefulWidget {
@@ -24,6 +27,55 @@ class _UserFormPageState extends State<UserFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    final isEdit = widget.user != null;
+    return Scaffold(
+      appBar: AppBar(title: Text(isEdit ? "Edit User" : "Tambah User")),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: "Nama Lengkap",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                labelText: "Email",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  final newUser = UserEntity(
+                    id: isEdit
+                        ? widget.user!.id
+                        : DateTime.now().millisecondsSinceEpoch.toString(),
+                    name: _nameController.text,
+                    email: _emailController.text,
+                  );
+                  if (isEdit) {
+                    context.read<UserBloc>().add(UpdateUserEvent(newUser));
+                  } else {
+                    context.read<UserBloc>().add(AddUserEvent(newUser));
+                  }
+                  Navigator.pop(context);
+                },
+
+                child: Text(isEdit ? "Simpan Perubahan" : "Simpan User Baru"),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
