@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sql_209/bloc/user_bloc.dart';
 import 'package:sql_209/bloc/user_event.dart';
 import 'package:sql_209/bloc/user_state.dart';
+import 'package:sql_209/main_layout.dart';
 import 'package:sql_209/pages/user_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -10,9 +11,17 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Daftar User")),
-      body: BlocBuilder<UserBloc, UserState>(
+    return MainLayout(
+      title: "Daftar User",
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: MainLayout.fab,
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const UserFormPage()),
+        ),
+        child: const Icon(Icons.add, color: MainLayout.primaryColor),
+      ),
+      child: BlocBuilder<UserBloc, UserState>(
         builder: (context, state) {
           if (state is UserLoading)
             return const Center(child: CircularProgressIndicator());
@@ -23,12 +32,14 @@ class HomePage extends StatelessWidget {
                 final user = state.users[index];
                 return ListTile(
                   title: Text(user.name),
-                  subtitle: Text("${user.email} | ${user.noTelp} | ${user.alamat}"),
+                  subtitle: Text(
+                    "${user.email} | ${user.noTelp} | ${user.alamat}",
+                  ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        icon: const Icon(Icons.edit, color: MainLayout.editButton),
                         onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -37,7 +48,7 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
+                        icon: const Icon(Icons.delete, color: MainLayout.deleteButton),
                         onPressed: () => context.read<UserBloc>().add(
                           DeleteUserEvent(user.id),
                         ),
@@ -52,13 +63,6 @@ class HomePage extends StatelessWidget {
             child: Text("Belum ada user. Klik + untuk menambahkan."),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const UserFormPage()),
-        ),
-        child: const Icon(Icons.add),
       ),
     );
   }
