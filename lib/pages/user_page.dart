@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:sql_209/bloc/user_bloc.dart';
 import 'package:sql_209/bloc/user_event.dart';
 import 'package:sql_209/domain/entities/user_entity.dart';
-
 class UserFormPage extends StatefulWidget {
   final UserEntity? user;
   const UserFormPage({super.key, this.user});
@@ -15,6 +15,9 @@ class UserFormPage extends StatefulWidget {
 class _UserFormPageState extends State<UserFormPage> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _alamatController = TextEditingController();
+
+  String fullPhone = '';
 
   @override
   void initState() {
@@ -22,6 +25,8 @@ class _UserFormPageState extends State<UserFormPage> {
     if (widget.user != null) {
       _nameController.text = widget.user!.name;
       _emailController.text = widget.user!.email;
+      _alamatController.text = widget.user!.alamat;
+      fullPhone = widget.user!.noTelp;
     }
   }
 
@@ -50,6 +55,25 @@ class _UserFormPageState extends State<UserFormPage> {
               ),
             ),
             const SizedBox(height: 20),
+            IntlPhoneField(
+              decoration: const InputDecoration(
+                labelText: "No Telp",
+                border: OutlineInputBorder(),
+              ),
+              initialCountryCode: 'ID',
+              onChanged: (phone){
+                fullPhone = phone.completeNumber;
+              },
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _alamatController,
+              decoration: const InputDecoration(
+                labelText: "Alamat",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -61,6 +85,8 @@ class _UserFormPageState extends State<UserFormPage> {
                         : DateTime.now().millisecondsSinceEpoch.toString(),
                     name: _nameController.text,
                     email: _emailController.text,
+                    noTelp: fullPhone,
+                    alamat: _alamatController.text,
                   );
                   if (isEdit) {
                     context.read<UserBloc>().add(UpdateUserEvent(newUser));
