@@ -23,7 +23,7 @@ class HomePage extends StatelessWidget {
                 final user = state.users[index];
                 return ListTile(
                   title: Text(user.name),
-                  subtitle: Text(user.email),
+                  subtitle: Text("${user.email} | ${user.noTelp} | ${user.alamat}"),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
