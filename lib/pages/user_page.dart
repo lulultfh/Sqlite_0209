@@ -5,6 +5,7 @@ import 'package:sql_209/bloc/user_bloc.dart';
 import 'package:sql_209/bloc/user_event.dart';
 import 'package:sql_209/bloc/user_state.dart';
 import 'package:sql_209/domain/entities/user_entity.dart';
+import 'package:sql_209/main_layout.dart';
 
 class UserFormPage extends StatefulWidget {
   final UserEntity? user;
@@ -49,9 +50,10 @@ class _UserFormPageState extends State<UserFormPage> {
           ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
-      child: Scaffold(
-        appBar: AppBar(title: Text(isEdit ? "Edit User" : "Tambah User")),
-        body: Padding(
+      child: MainLayout(
+        title: (isEdit ? "Edit User" : "Tambah User"),
+        showAppBar: true,
+        child: Padding(
           padding: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Form(
@@ -64,6 +66,7 @@ class _UserFormPageState extends State<UserFormPage> {
                       labelText: "Nama Lengkap",
                       border: OutlineInputBorder(),
                     ),
+                    style: TextStyle(color: MainLayout.inputBorderColor),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Nama tidak boleh kosong';
@@ -130,6 +133,7 @@ class _UserFormPageState extends State<UserFormPage> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
+                      style:ElevatedButton.styleFrom(backgroundColor: MainLayout.deleteButton),
                       onPressed: () {
                         if (!_formKey.currentState!.validate()) return;
                         final newUser = UserEntity(
@@ -154,6 +158,9 @@ class _UserFormPageState extends State<UserFormPage> {
 
                       child: Text(
                         isEdit ? "Simpan Perubahan" : "Simpan User Baru",
+                        style: const TextStyle(
+                          color: Colors.white
+                        ),
                       ),
                     ),
                   ),
