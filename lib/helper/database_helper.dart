@@ -21,7 +21,7 @@ class DatabaseHelper {
       version: 1,
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE users(id TEXT PRIMARY KEY, name TEXT, email TEXT)',
+          'CREATE TABLE users(id TEXT PRIMARY KEY, name TEXT, email TEXT, noTelp TEXT, alamat TEXT)',
         );
       },
     );
