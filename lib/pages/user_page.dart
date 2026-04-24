@@ -15,6 +15,8 @@ class UserFormPage extends StatefulWidget {
 }
 
 class _UserFormPageState extends State<UserFormPage> {
+  final _formKey = GlobalKey<FormState>();
+
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _alamatController = TextEditingController();
@@ -51,70 +53,113 @@ class _UserFormPageState extends State<UserFormPage> {
         appBar: AppBar(title: Text(isEdit ? "Edit User" : "Tambah User")),
         body: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: "Nama Lengkap",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: "Email",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20),
-              IntlPhoneField(
-                decoration: const InputDecoration(
-                  labelText: "No Telp",
-                  border: OutlineInputBorder(),
-                ),
-                initialCountryCode: 'ID',
-                initialValue: widget.user?.noTelp,
-                onChanged: (phone) {
-                  fullPhone = phone.completeNumber;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _alamatController,
-                decoration: const InputDecoration(
-                  labelText: "Alamat",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    final newUser = UserEntity(
-                      id: isEdit
-                          ? widget.user!.id
-                          : DateTime.now().millisecondsSinceEpoch.toString(),
-                      name: _nameController.text,
-                      email: _emailController.text,
-                      noTelp: fullPhone,
-                      alamat: _alamatController.text,
-                    );
-                    if (isEdit) {
-                      context.read<UserBloc>().add(UpdateUserEvent(newUser));
-                    } else {
-                      context.read<UserBloc>().add(AddUserEvent(newUser));
-                    }
-                    // Navigator.pop(context);
-                  },
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      labelText: "Nama Lengkap",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Nama tidak boleh kosong';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      labelText: "Email",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Email tidak boleh kosong';
+                      }
+                      if (!value.contains('@')) {
+                        return 'Format email tidak valid';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  IntlPhoneField(
+                    keyboardType: TextInputType.phone,
+                    decoration: const InputDecoration(
+                      labelText: "No Telp",
+                      border: OutlineInputBorder(),
+                    ),
+                    initialCountryCode: 'ID',
+                    initialValue: widget.user?.noTelp,
+                    onChanged: (phone) {
+                      fullPhone = phone.completeNumber;
+                    },
+                    validator: (phone) {
+                      if (phone == null || phone.number.isEmpty) {
+                        return 'Nomor tidak boleh kosong';
+                      }
+                      if (!phone.completeNumber.startsWith('+62')) {
+                        return 'Harus nomor Indonesia (+62)';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _alamatController,
+                    decoration: const InputDecoration(
+                      labelText: "Alamat",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Alamat tidak boleh kosong';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (!_formKey.currentState!.validate()) return;
+                        final newUser = UserEntity(
+                          id: isEdit
+                              ? widget.user!.id
+                              : DateTime.now().millisecondsSinceEpoch
+                                    .toString(),
+                          name: _nameController.text,
+                          email: _emailController.text,
+                          noTelp: fullPhone,
+                          alamat: _alamatController.text,
+                        );
+                        if (isEdit) {
+                          context.read<UserBloc>().add(
+                            UpdateUserEvent(newUser),
+                          );
+                        } else {
+                          context.read<UserBloc>().add(AddUserEvent(newUser));
+                        }
+                        // Navigator.pop(context);
+                      },
 
-                  child: Text(isEdit ? "Simpan Perubahan" : "Simpan User Baru"),
-                ),
+                      child: Text(
+                        isEdit ? "Simpan Perubahan" : "Simpan User Baru",
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
