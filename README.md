@@ -20,6 +20,10 @@ samples, guidance on mobile development, and a full API reference.
 >Nama: Lu'lu' Luthfiah <br>
 >NIM: 20230140209 <br>
 
+## Table of Content
+- [Tugas Teori](#screenshot)
+- [Tugas Praktikum](#tugas-praktikum)
+
 ## Screenshot
 |**Halaman Home**|**Halaman UserForm (Tambah User)**|**Halaman UserForm (isi Data)**|**Halaman Home (After isi Data)**|
 |---|---|---|---|
